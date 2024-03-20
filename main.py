@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse  # html response in the endpoints
-from movies_list_dic import movies
+from utils.movies_list_dic import movies
 
 app = FastAPI()
 app.title = "Mi applicacion con FastAPI"
@@ -16,3 +16,11 @@ def message():
 @app.get('/movies', tags=['movies'])
 def get_movies():
   return movies_list
+
+# Get and movie using their ID
+@app.get('/movies/{id}', tags=['movies'])
+def get_movie(id: int):
+  for item in movies_list:
+    if item['id'] == id:
+      return item
+  return []
