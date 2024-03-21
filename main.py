@@ -30,16 +30,16 @@ def get_movie(id: int):
 def get_movies_by_category(category:str, year:int):
   return [ item for item in movies if item['category'] == category] # this will return a movie that matches with the movie category in the movies_list_dic.py
 
-# Add a post endpoint with the values of the movie in the body request.
+# POST endpoint with the values of the movie in the body request.
 @app.post('/movies', tags=['movies'])
 def create_movie(
-    id: int = Body(), 
-    title: str = Body(), 
-    overview: str = Body(), 
-    year: str = Body(), 
-    rating: float = Body(), 
-    category: str = Body()
-  ):
+  id: int = Body(), 
+  title: str = Body(), 
+  overview: str = Body(), 
+  year: str = Body(), 
+  rating: float = Body(), 
+  category: str = Body()
+):
   movies_list.append({
     "id": id,
     "title": title,
@@ -49,3 +49,25 @@ def create_movie(
     "category": category
   })
   return movies_list
+
+# PUT endpoint for update a movie
+@app.put('/movies/{id}', tags=['movies'])
+def update_movie(
+  id: int,  # id is not longer requiered as a body param (in difference of the POST enpoint)
+  title: str = Body(), 
+  overview: str = Body(), 
+  year: str = Body(), 
+  rating: float = Body(), 
+  category: str = Body()
+):
+  for item in movies_list:
+    if item['id'] == id:
+      # Here we update the values of the movie selected by id
+      item['title'] = title
+      item['overview'] = overview
+      item['year'] = year
+      item['rating'] = rating
+      item['category'] = category
+      return movies_list
+
+# DELETE endpoint for delete the movies by using their id
