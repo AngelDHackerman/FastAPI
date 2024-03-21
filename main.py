@@ -1,12 +1,21 @@
 from fastapi import FastAPI, Body
 from fastapi.responses import HTMLResponse  # html response in the endpoints
 from utils.movies_list_dic import movies
+from pydantic import BaseModel # Utilizar Pydantic en FastAPI para la definición y validación de modelos de datos
+from typing import Optional
 
 app = FastAPI()
 app.title = "Mi applicacion con FastAPI"
 app.version = "0.0.1"
-
 movies_list = movies
+
+class Movie(BaseModel):
+  id: Optional[int] = None # if there is not id, the id will be automatically "None"
+  title: str
+  overview: str
+  year: int
+  rating: float
+  category: str
 
 
 @app.get('/', tags=['Home'])
@@ -32,42 +41,21 @@ def get_movies_by_category(category:str, year:int):
 
 # POST endpoint with the values of the movie in the body request.
 @app.post('/movies', tags=['movies'])
-def create_movie(
-  id: int = Body(), 
-  title: str = Body(), 
-  overview: str = Body(), 
-  year: str = Body(), 
-  rating: float = Body(), 
-  category: str = Body()
-):
-  movies_list.append({
-    "id": id,
-    "title": title,
-    "overview": overview,
-    "year": year,
-    "rating": rating,
-    "category": category
-  })
+def create_movie(movie: Movie):
+  movies_list.append(movie)
   return movies_list
 
 # PUT endpoint for update a movie
 @app.put('/movies/{id}', tags=['movies'])
-def update_movie(
-  id: int,  # id is not longer requiered as a body param (in difference of the POST enpoint)
-  title: str = Body(), 
-  overview: str = Body(), 
-  year: str = Body(), 
-  rating: float = Body(), 
-  category: str = Body()
-):
+def update_movie(id: int, movie: Movie):
   for item in movies_list:
     if item['id'] == id:
       # Here we update the values of the movie selected by id
-      item['title'] = title
-      item['overview'] = overview
-      item['year'] = year
-      item['rating'] = rating
-      item['category'] = category
+      item['title'] = movie.title
+      item['overview'] = movie.overview
+      item['year'] = movie.year
+      item['rating'] = movie.rating
+      item['category'] = movie.category
       return movies_list
 
 # DELETE endpoint for delete the movies by using their id
