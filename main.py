@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Body
 from fastapi.responses import HTMLResponse  # html response in the endpoints
 from utils.movies_list_dic import movies
 
@@ -30,3 +30,22 @@ def get_movie(id: int):
 def get_movies_by_category(category:str, year:int):
   return [ item for item in movies if item['category'] == category] # this will return a movie that matches with the movie category in the movies_list_dic.py
 
+# Add a post endpoint with the values of the movie in the body request.
+@app.post('/movies', tags=['movies'])
+def create_movie(
+    id: int = Body(), 
+    title: str = Body(), 
+    overview: str = Body(), 
+    year: str = Body(), 
+    rating: float = Body(), 
+    category: str = Body()
+  ):
+  movies_list.append({
+    "id": id,
+    "title": title,
+    "overview": overview,
+    "year": year,
+    "rating": rating,
+    "category": category
+  })
+  return movies_list
