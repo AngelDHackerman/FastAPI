@@ -24,3 +24,9 @@ def get_movie(id: int):
     if item['id'] == id:
       return item
   return []
+
+# Params Query, getting movie by category, by adding a "/" you can set the endpoit to receive query params
+@app.get('/movies/', tags=['movies'])
+def get_movies_by_category(category:str, year:int):
+  return [ item for item in movies if item['category'] == category] # this will return a movie that matches with the movie category in the movies_list_dic.py
+
