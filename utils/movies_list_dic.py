@@ -9,9 +9,9 @@ movies = [
     },
     {
         'id': 2,
-        'title': 'Avatar 2',
-        'overview': "En un exuberante planeta llamado Pandora 2 viven los Na'vi, seres que ...",
-        'year': '2015',
+        'title': 'Angel Hackerman Origins',
+        'overview': "Un joven hacker descubre que tiene super poderes, los poderes de hackear personas y computadoras",
+        'year': '2025',
         'rating': 8.0,
         'category': 'Acción'    
     } 

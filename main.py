@@ -71,3 +71,9 @@ def update_movie(
       return movies_list
 
 # DELETE endpoint for delete the movies by using their id
+@app.delete('/movies/{id}', tags=['movies'])
+def delete_movie(id: int):
+  for item in movies_list:
+    if item['id'] == id:
+      movies_list.remove(item)
+      return movies_list
