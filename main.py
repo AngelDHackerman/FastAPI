@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Body
+from fastapi import FastAPI, Body, Path, Query
 from fastapi.responses import HTMLResponse  # html response in the endpoints
 from utils.movies_list_dic import movies
 from pydantic import BaseModel, Field # Utilizar Pydantic en FastAPI para la definición y validación de modelos de datos
@@ -14,8 +14,8 @@ class Movie(BaseModel):
   title: str = Field(min_length=5, max_length=15) # validate that title has no more than 15 chars and no less than 5 chars
   overview: str = Field(min_length=15, max_length=50)
   year: int = Field(le=2025)
-  rating: float
-  category: str
+  rating: float = Field(ge=1, le=10)
+  category: str = Field(min_length=4, max_length=15)
 
   # Adding new method for add extra data in the JSON schema in Fast API:
   model_config = { 
@@ -42,7 +42,8 @@ def get_movies():
 
 # Get and movie using their ID
 @app.get('/movies/{id}', tags=['movies'])
-def get_movie(id: int):
+# Search a movie by its ID between 1 or 2000
+def get_movie(id: int = Path(ge=1, le=2000)):
   for item in movies_list:
     if item['id'] == id:
       return item
@@ -50,7 +51,7 @@ def get_movie(id: int):
 
 # Params Query, getting movie by category, by adding a "/" you can set the endpoit to receive query params
 @app.get('/movies/', tags=['movies'])
-def get_movies_by_category(category:str, year:int):
+def get_movies_by_category(category:str = Query(min_length=5, max_length=15)):
   return [ item for item in movies if item['category'] == category] # this will return a movie that matches with the movie category in the movies_list_dic.py
 
 # POST endpoint with the values of the movie in the body request.
