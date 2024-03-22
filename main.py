@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Body
 from fastapi.responses import HTMLResponse  # html response in the endpoints
 from utils.movies_list_dic import movies
-from pydantic import BaseModel # Utilizar Pydantic en FastAPI para la definición y validación de modelos de datos
+from pydantic import BaseModel, Field # Utilizar Pydantic en FastAPI para la definición y validación de modelos de datos
 from typing import Optional
 
 app = FastAPI()
@@ -11,11 +11,25 @@ movies_list = movies
 
 class Movie(BaseModel):
   id: Optional[int] = None # if there is not id, the id will be automatically "None"
-  title: str
-  overview: str
-  year: int
+  title: str = Field(min_length=5, max_length=15) # validate that title has no more than 15 chars and no less than 5 chars
+  overview: str = Field(min_length=15, max_length=50)
+  year: int = Field(le=2025)
   rating: float
   category: str
+
+  # Adding new method for add extra data in the JSON schema in Fast API:
+  model_config = { 
+    "json_schema_extra": {
+      "example": [{
+        "id": 1,
+        "title": "Mi Pelicula X",
+        "overview": "Descripcion de la pelicula",
+        "year": 2024,
+        "rating": 9.9,
+        "category": "Accion"
+      }]
+    }
+  }
 
 
 @app.get('/', tags=['Home'])
