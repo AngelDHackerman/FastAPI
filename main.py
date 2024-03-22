@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Body, Path, Query
-from fastapi.responses import HTMLResponse  # html response in the endpoints
+from fastapi.responses import HTMLResponse, JSONResponse  # html response in the endpoints
 from utils.movies_list_dic import movies
 from pydantic import BaseModel, Field # Utilizar Pydantic en FastAPI para la definición y validación de modelos de datos
 from typing import Optional
@@ -38,7 +38,7 @@ def message():
 
 @app.get('/movies', tags=['movies'])
 def get_movies():
-  return movies_list
+  return JSONResponse(content=movies_list)
 
 # Get and movie using their ID
 @app.get('/movies/{id}', tags=['movies'])
@@ -46,13 +46,14 @@ def get_movies():
 def get_movie(id: int = Path(ge=1, le=2000)):
   for item in movies_list:
     if item['id'] == id:
-      return item
-  return []
+      return JSONResponse(content=item)
+  return JSONResponse(content=[])
 
 # Params Query, getting movie by category, by adding a "/" you can set the endpoit to receive query params
 @app.get('/movies/', tags=['movies'])
 def get_movies_by_category(category:str = Query(min_length=5, max_length=15)):
-  return [ item for item in movies if item['category'] == category] # this will return a movie that matches with the movie category in the movies_list_dic.py
+  data = [ item for item in movies if item['category'] == category] # this will return a movie that matches with the movie category in the movies_list_dic.py
+  return JSONResponse(data)
 
 # POST endpoint with the values of the movie in the body request.
 @app.post('/movies', tags=['movies'])
